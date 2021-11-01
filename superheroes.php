@@ -63,10 +63,45 @@ $superheroes = [
   ], 
 ];
 
+
 ?>
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+<?php 
+
+    if(isset($_GET['search'])){
+        $term = $_GET['search'];
+        $trimTerm = trim_input($term);
+        
+        $found = false;
+        // Search array
+        foreach ($superheroes as $superhero){
+            if (array_search($trimTerm, $superhero)) { 
+                $found = true;
+                ?>
+                <h3><?= $superhero['name']; ?></h3>
+                <h4><?= "A.K.A " . $superhero['alias']; ?></h4>
+                <p><?= $superhero['biography']; ?></p>
+            <?php
+            }
+        }
+        if (!$found) {
+            echo "<p id='error'>Superhero not found</p>";
+        }
+    }else{ ?>   
+        <ul>
+        <?php foreach ($superheroes as $superhero): ?>
+        <li><?= $superhero['alias']; ?></li>
+        <?php endforeach; ?>
+        </ul>
+    <?php
+    }
+ 
+    //Sanitize the user input from the search text field
+    function trim_input($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+
+?>

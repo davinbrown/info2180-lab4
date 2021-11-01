@@ -1,15 +1,28 @@
 window.onload = function() {
     var httpRequest;
 
-    document.getElementById("search").addEventListener("click", function(event) {
+    document.getElementById("search-btn").addEventListener("click", function(event) {
         event.preventDefault();
-
 
         httpRequest = new XMLHttpRequest();
 
+        var letters_only = /^[a-zA-Z\s]*$/;
+
+        // get search input
+        var searchTerm = document.getElementById("search-input").value.trim();
+        
+        if (searchTerm == "") {
+            var queryStr = "";
+        }else{
+            // sanitise query
+            if (letters_only.test(searchTerm)) {
+                var queryStr = "?search=" + searchTerm;
+            }
+        }
+
         //request 
         httpRequest.onreadystatechange = searchHeroes;
-        httpRequest.open("GET", "superheroes.php");
+        httpRequest.open("GET", "superheroes.php" + queryStr );
         httpRequest.send();
 
 
@@ -18,7 +31,8 @@ window.onload = function() {
                 // Everything is good, the response was received.
                 if (httpRequest.status === 200) {
                     // Perfect!
-                    alert(httpRequest.responseText);
+                    document.getElementById("result").innerHTML = httpRequest.responseText;
+                    //alert(httpRequest.responseText);
                 } else {
                     // There was a problem with the request.
                 }
@@ -27,6 +41,5 @@ window.onload = function() {
             }
         }
     });
-
 
 };
